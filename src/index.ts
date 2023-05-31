@@ -30,10 +30,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://music-app-client-vq4s.vercel.app/",
-    ],
+    origin: "https://music-app-client-vq4s.vercel.app/",
     credentials: true,
   })
 );
