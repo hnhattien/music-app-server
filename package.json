@@ -42,6 +42,7 @@
     "start:prod": "NODE_ENV=production node -r ts-node/register/transpile-only -r tsconfig-paths/register ./dist/index.js",
     "start": "ts-node-dev --ignore-watch node_modules -r tsconfig-paths/register  --respawn --transpileOnly ./src/index.ts",
     "startup": "pm2 start npm --name \"music-app-server\" -- run start:prod",
+    "restart-server": "pm2 restart all",
     "dev": "nodemon",
     "db:genClient": "prisma generate",
     "db:syncSchema": "prisma db push",
