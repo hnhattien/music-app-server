@@ -26,7 +26,9 @@ const initPassport = (passport: PassportStatic) => {
             if (!user) {
               return done(null, false, { message: "Incorrect username." });
             }
-
+            if (!user.password) {
+              return done(null, false, { message: "Incorrect username." });
+            }
             const isSamePassword = await bcryptUtil.comparePassword(
               password,
               user.password
