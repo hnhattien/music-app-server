@@ -14,7 +14,7 @@ const upload = async (fileName: string, base64: string) => {
     fileName: fileName,
     useUniqueFileName: false,
     overwriteFile: true,
-    folder: "chat_app",
+    folder: "music_app",
   });
   return res;
 };

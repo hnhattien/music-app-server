@@ -72,6 +72,7 @@ model Music {
   viewcount   Int         @default(0)
   likes       Likes[]
   lyricTable  LyricTable?
+  cdnAudioUrl String?
 }
 
 model Likes {
@@ -111,9 +112,9 @@ model Notifications_Seen {
 }
 
 model ResetPassword {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   selector  String
   token     String
   useremail String
-  expires   Int
+  expires   DateTime
 }

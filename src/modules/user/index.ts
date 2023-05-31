@@ -1,12 +1,15 @@
 import { Application } from "express";
 import userController from "./user.controller";
 export const userRoutes = (app: Application) => {
-  app.get("/user", userController.getUsers);
-  app.get("/user/:id", userController.getUserById);
-  app.get("/user/likedmusics", userController.getLikedMusics);
-  app.post("/user/uploadavatar", userController.uploadAvatar);
-  app.post("/user/changenickname", userController.changeNickName);
-  app.post("/user/changepassword", userController.changePassword);
-  app.get("/user/resetpassword", userController.resetPassword);
-  app.get("/user/authresetpassword", userController.authenticateResetPassword);
+  app.get("/users", userController.getUsers);
+  app.get("/users/profile", userController.getProfile);
+  app.get("/users/likedmusics", userController.getLikedMusics);
+  app.post("/users/uploadavatar", userController.uploadAvatar);
+  app.post("/users/changenickname", userController.changeNickName);
+  app.post("/users/changepassword", userController.changePassword);
+  app.post("/users/resetpassword", userController.resetPassword);
+  app.post(
+    "/users/authresetpassword",
+    userController.authenticateResetPassword
+  );
 };

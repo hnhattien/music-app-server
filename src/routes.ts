@@ -1,5 +1,7 @@
 import { albumRoutes } from "@modules/album";
 import { artistRoutes } from "@modules/artist";
+import audioRoutes from "@modules/audio";
+import authRoutes from "@modules/auth";
 import { categoryRoutes } from "@modules/category";
 import { musicRoutes } from "@modules/music";
 import { userRoutes } from "@modules/user";
@@ -11,6 +13,8 @@ const routes = (app: Application) => {
   musicRoutes(app);
   categoryRoutes(app);
   albumRoutes(app);
+  audioRoutes(app);
+  authRoutes(app);
 };
 
 export default routes;

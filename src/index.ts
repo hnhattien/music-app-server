@@ -9,8 +9,19 @@ import { ErrorBase, InternalServerError } from "./core/types/ErrorTypes";
 import { get } from "lodash";
 import routes from "./routes";
 import passport from "passport";
+import flash from "express-flash";
+import initPassport from "@core/authenticate/PassportInit";
+import expressSession from "express-session";
 const app = express();
+
 const server = http.createServer(app);
+
+const session = {
+  secret: `secretcode`,
+  cookie: { path: "/", originalMaxAge: 50000000 },
+  resave: false,
+  saveUninitialized: false,
+};
 
 app.use(
   express.json({
@@ -19,7 +30,10 @@ app.use(
 );
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://music-app-client-vq4s.vercel.app/",
+    ],
     credentials: true,
   })
 );
@@ -28,9 +42,15 @@ app.use(
     limit: "50mb",
   })
 );
+app.use(flash());
 app.use(express.urlencoded({ extended: false, limit: "25mb" }));
 app.use(bodyParser.urlencoded({ limit: "25mb", extended: true }));
 app.use(cookieParser());
+
+app.use(expressSession(session));
+app.use(passport.initialize());
+app.use(passport.session());
+initPassport(passport);
 
 app.get("/", (req, res) => {
   res.send("hello world");

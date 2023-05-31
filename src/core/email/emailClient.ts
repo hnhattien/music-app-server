@@ -6,6 +6,7 @@ class EmailClient {
     token: config.MAIL_TRAP_TOKEN,
   });
   static getInstace() {
+    console.log(config.MAIL_TRAP_TOKEN);
     return EmailClient.mailTrapClient
       ? EmailClient.mailTrapClient
       : new MailtrapClient({

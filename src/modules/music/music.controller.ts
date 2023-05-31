@@ -15,7 +15,9 @@ const getMusicInfoById = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.params);
     const { id } = req.params || {};
+    console.log(id, "Joi");
     if (!id) next("route");
     const user = req.user as Partial<User>;
     if (user) {
@@ -95,7 +97,17 @@ const searchMusic = async (req: Request, res: Response, next: NextFunction) => {
           ],
         },
       });
-      res.send(musics);
+      const artists = await prismaClient.artist.findMany({
+        where: {
+          title: {
+            contains: target,
+          },
+        },
+      });
+      res.send({
+        musics: musics,
+        artists: artists,
+      });
     } else {
       res.send([]);
     }
@@ -133,14 +145,23 @@ const getMusicInfoBySlug = async (
 ) => {
   try {
     const { slug } = req.params || {};
-    if (!slug) next("route");
     const user = req.user as Partial<User>;
+    console.log(user);
     if (user) {
+      console.log(slug);
       const musicInfo = await prismaClient.music.findFirst({
         where: {
-          slug: slug,
+          OR: [
+            {
+              slug: slug,
+            },
+            {
+              id: toInteger(slug),
+            },
+          ],
         },
         include: {
+          artist: true,
           likes: {
             where: {
               song: {
@@ -156,15 +177,24 @@ const getMusicInfoBySlug = async (
     } else {
       const musicInfo = await prismaClient.music.findFirst({
         where: {
-          slug,
+          OR: [
+            {
+              slug: slug,
+            },
+            {
+              id: toInteger(slug),
+            },
+          ],
         },
         include: {
           lyricTable: true,
+          artist: true,
         },
       });
       res.send(musicInfo);
     }
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -175,9 +205,9 @@ const postHeartActionToMusic = async (
   next: NextFunction
 ) => {
   try {
-    const { songid, userid } = req.body || {};
+    const { songid } = req.body || {};
     const user = req.user as Partial<User>;
-    if (user) {
+    if (user && user.id) {
       const affectedMusic = await prismaClient.music.findFirst({
         where: {
           id: toInteger(songid),
@@ -186,7 +216,7 @@ const postHeartActionToMusic = async (
       const likedMusic = await prismaClient.likes.findFirst({
         where: {
           songid: toInteger(songid),
-          userid: toInteger(userid),
+          userid: toInteger(user.id),
         },
       });
       if (likedMusic) {
@@ -203,7 +233,7 @@ const postHeartActionToMusic = async (
         await prismaClient.likes.create({
           data: {
             songid: toInteger(songid),
-            userid: toInteger(userid),
+            userid: toInteger(user.id),
           },
         });
         res.send({ message: "Liked", isLike: false, music: affectedMusic });

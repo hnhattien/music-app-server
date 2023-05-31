@@ -11,6 +11,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import emailClient from "@core/email/emailClient";
 import config from "@core/config";
+import moment from "moment";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as Partial<User>;
@@ -54,9 +55,9 @@ const uploadAvatar = async (
       let base64 = req.body.base64Image;
       let filename = v4();
 
-      let rawData = base64.split(";base64,").pop();
-      imagekitUtil.upload(filename, rawData);
-      prismaClient.user.update({
+      const re = await imagekitUtil.upload(filename, base64);
+      console.log(re);
+      await prismaClient.user.update({
         where: {
           id: user.id,
         },
@@ -68,8 +69,7 @@ const uploadAvatar = async (
     } else {
       res.send({
         error: {
-          message:
-            "Yout not permit to see user infomation. Please login as admin.",
+          message: "Yout not permit to edit this user infomation.",
         },
       });
     }
@@ -87,7 +87,7 @@ const changeNickName = async (
   try {
     if (user) {
       let newNickname = req.body.newNickname;
-      prismaClient.user.update({
+      await prismaClient.user.update({
         where: {
           id: user.id,
         },
@@ -135,16 +135,15 @@ const getLikedMusics = async (
   }
 };
 
-const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user as Partial<User>;
-  let id = req.params.id;
   try {
-    if (!user || toInteger(user.id) !== toInteger(id))
-      throw res.send({
+    if (!user)
+      res.send({
         error: { message: "You cannot see user info who is not you." },
       });
     else {
-      const userInfo = await prismaClient.music.findFirst({
+      const userInfo = await prismaClient.user.findFirst({
         where: {
           id: user.id,
         },
@@ -229,46 +228,55 @@ const resetPassword = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { username } = req.body || {};
-  const userInfo = await prismaClient.user.findFirst({
-    where: {
-      OR: [
-        {
-          username,
-        },
-        {
-          email: username,
-        },
-      ],
-    },
-  });
-  if (!userInfo) {
-    res.send({ error: { message: "User not found" } });
-    return;
-  }
-  let token = crypto.randomBytes(20).toString("hex");
-  let selector = crypto.randomBytes(9).toString("hex");
-  const EXPIRES_IN = 600000; //5 minutes afterward
-  let expires = new Date().valueOf() + EXPIRES_IN;
-  let hashToken = await bcryptUtil.generateHash(token);
-  await prismaClient.resetPassword.create({
-    data: {
-      expires: expires,
-      token: hashToken,
-      selector,
-      useremail: userInfo.email,
-    },
-  });
+  try {
+    const { username } = req.body || {};
+    const userInfo = await prismaClient.user.findFirst({
+      where: {
+        OR: [
+          {
+            username,
+          },
+          {
+            email: username,
+          },
+        ],
+      },
+    });
+    if (!userInfo) {
+      res.send({ error: { message: "User not found" } });
+      return;
+    }
+    let token = crypto.randomBytes(20).toString("hex");
+    let selector = crypto.randomBytes(9).toString("hex");
+    const EXPIRES_IN = 600000; //5 minutes afterward
+    let expires = moment(Date.now()).add(EXPIRES_IN, "millisecond").toDate();
+    let hashToken = await bcryptUtil.generateHash(token);
+    await prismaClient.resetPassword.create({
+      data: {
+        expires: expires,
+        token: hashToken,
+        selector,
+        useremail: userInfo.email,
+      },
+    });
 
-  emailClient.send({
-    from: { email: config.SENDER_EMAIL, name: "Tien Hoang" },
-    to: [{ email: userInfo.email, name: "User" }],
-    subject: "Reset Password",
-    html:
-      `<h1>Reset Password For SE447-E Music App</h1>` +
-      `<h1><a href='http://${req.hostname}/resetpassword?sel=${selector}&token=${token}'>Click here to reset password.</a></h1>`,
-  });
-  res.send({ message: "Check email for reset password." });
+    await emailClient.send({
+      from: { email: config.SENDER_EMAIL, name: "Tien Hoang" },
+      to: [{ email: userInfo.email, name: "User" }],
+      subject: "Reset Password",
+      html:
+        `<h1>Reset Password For SE447-E Music App</h1>` +
+        `<h1><a href='http://${req.hostname}/resetpassword?sel=${selector}&token=${token}'>Click here to reset password.</a></h1>`,
+    });
+    res.send({ message: "Check email for reset password." });
+  } catch (err) {
+    console.log(err);
+    res.send({
+      error: {
+        message: String(err),
+      },
+    });
+  }
 };
 
 const authenticateResetPassword = async (
@@ -284,7 +292,7 @@ const authenticateResetPassword = async (
         where: {
           selector: sel,
           expires: {
-            gt: new Date().valueOf(),
+            gt: moment(Date.now()).toDate(),
           },
         },
       });
@@ -316,7 +324,7 @@ export default {
   uploadAvatar,
   changeNickName,
   getLikedMusics,
-  getUserById,
+  getProfile,
   changePassword,
   authenticateResetPassword,
   resetPassword,

@@ -17,29 +17,27 @@ const initPassport = (passport: PassportStatic) => {
       },
       async function (req: Request, username: string, password: string, done) {
         try {
-          if (req.body.isAdminLogin) {
-            const user = await prismaClient.user.findFirst({
-              where: {
-                username,
-              },
-            });
-            if (!user) {
-              return done(null, false, { message: "Incorrect username." });
-            }
-            if (!user.password) {
-              return done(null, false, { message: "Incorrect username." });
-            }
-            const isSamePassword = await bcryptUtil.comparePassword(
-              password,
-              user.password
-            );
-            if (!isSamePassword) {
-              return done(null, false, {
-                message: "Incorrect password.",
-              });
-            }
-            return done(null, user, { message: "Login success" });
+          const user = await prismaClient.user.findFirst({
+            where: {
+              username,
+            },
+          });
+          if (!user) {
+            return done(null, false, { message: "Incorrect username." });
           }
+          if (!user.password) {
+            return done(null, false, { message: "Incorrect username." });
+          }
+          const isSamePassword = await bcryptUtil.comparePassword(
+            password,
+            user.password
+          );
+          if (!isSamePassword) {
+            return done(null, false, {
+              message: "Incorrect password.",
+            });
+          }
+          return done(null, user, { message: "Login success" });
         } catch (err) {
           return done(err);
         }
@@ -48,7 +46,7 @@ const initPassport = (passport: PassportStatic) => {
   );
 
   passport.serializeUser((user: Partial<User>, done) => {
-    done(null, user.id);
+    return done(null, user.id);
   });
 
   passport.deserializeUser(async (id: User["id"], done) => {
@@ -65,8 +63,8 @@ const initPassport = (passport: PassportStatic) => {
         role: true,
       },
     });
-    if (user) done(null, user);
-    else done(new UnAuthenticated(), null);
+    if (user) return done(null, user);
+    else return done(new UnAuthenticated(), null);
   });
 };
 

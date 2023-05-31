@@ -69,6 +69,7 @@ const getArtistAndMusicByArtistSlug = async (
         title: customMusics[0].artist_name,
         artist_slug: customMusics[0].artist_slug,
         artist_thumbnail: artistMusics[0]?.artist?.thumbnail,
+        musics: artistMusics,
       };
       res.send(response);
     } else {
