@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Artist {
+  id        Int      @id @default(autoincrement())
+  title     String
+  thumbnail String   @default("default_user.png")
+  slug      String   @unique
+  adddate   DateTime @default(now())
+  albums    Album[]
+  musics    Music[]
+}
+
+model Category {
+  id        Int     @id @default(autoincrement())
+  title     String
+  slug      String  @unique
+  thumbnail String  @default("default_category.png")
+  musics    Music[]
+  albums    Album[]
+}
+
+model Album {
+  id        Int       @id @default(autoincrement())
+  title     String    @default("Album is not named")
+  artist_id Int?
+  artist    Artist?   @relation(fields: [artist_id], references: [id])
+  cat_id    Int?
+  cat       Category? @relation(fields: [cat_id], references: [id])
+
+  thumbnail String   @default("default_album.png")
+  slug      String   @unique
+  madedate  DateTime @default(now())
+}
+
+model User {
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique
+  email              String               @unique
+  password           String?
+  displayedName      String               @default("Anonymous")
+  avatar             String               @default("default_user.png")
+  role               String               @default("user")
+  joinday            DateTime             @default(now())
+  likes              Likes[]
+  lyricTable         LyricTable[]
+  notifications_Seen Notifications_Seen[]
+}
+
+model Music {
+  id          Int         @id @default(autoincrement())
+  title       String
+  audio       String
+  thumbnail   String      @default("default.jpg")
+  slug        String      @unique
+  artist_name String      @default("Unknown")
+  cat_id      Int         @default(1)
+  cat         Category    @relation(fields: [cat_id], references: [id])
+  public_year DateTime    @default(now())
+  artist_id   Int?
+  artist      Artist?     @relation(fields: [artist_id], references: [id])
+  upload_time DateTime    @default(now())
+  viewcount   Int         @default(0)
+  likes       Likes[]
+  lyricTable  LyricTable?
+}
+
+model Likes {
+  id     Int   @id @default(autoincrement())
+  userid Int
+  user   User  @relation(fields: [userid], references: [id])
+  songid Int
+  song   Music @relation(fields: [songid], references: [id])
+}
+
+model LyricTable {
+  id     Int     @id @default(autoincrement())
+  songid Int     @unique
+  music  Music   @relation(fields: [songid], references: [id])
+  lyrics String?
+  userid Int
+  user   User    @relation(fields: [userid], references: [id])
+}
+
+model Notifications {
+  id                 Int                  @id @default(autoincrement())
+  title              String
+  seen               Boolean              @default(false)
+  time               DateTime             @default(now())
+  type               String
+  thumbnail          String               @default("notificationdefault.jpg")
+  iconclasses        String               @default("fas fa-question")
+  notifications_Seen Notifications_Seen[]
+}
+
+model Notifications_Seen {
+  id              Int           @id @default(autoincrement())
+  notification_id Int
+  notification    Notifications @relation(fields: [notification_id], references: [id])
+  admin_id        Int
+  admin           User          @relation(fields: [admin_id], references: [id])
+}
+
+model ResetPassword {
+  id        Int    @id @default(autoincrement())
+  selector  String
+  token     String
+  useremail String
+  expires   Int
+}

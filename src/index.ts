@@ -8,11 +8,10 @@ import cookieParser from "cookie-parser";
 import { ErrorBase, InternalServerError } from "./core/types/ErrorTypes";
 import { get } from "lodash";
 import routes from "./routes";
+import passport from "passport";
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: "http://localhost:3000", credentials: true },
-});
+
 app.use(
   express.json({
     limit: "50mb",
@@ -68,6 +67,6 @@ app.use(
   }
 );
 
-server.listen(3200, () => {
-  console.log("listening on *:3200");
+server.listen(3500, () => {
+  console.log("listening on *:3500");
 });
