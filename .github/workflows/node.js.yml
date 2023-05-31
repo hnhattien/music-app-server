@@ -12,15 +12,6 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
-      IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
-      IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
-      UPCARE_SECRET_KEY: ${{ secrets.UPCARE_SECRET_KEY }}
-      UPCARE_PUBLIC_KEY: ${{ secrets.UPCARE_PUBLIC_KEY }}
-      MAILTRAP_TOKEN: ${{ secrets.MAILTRAP_TOKEN }}
-      SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
     strategy:
       matrix:
         node-version: [16.x]
@@ -28,6 +19,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Create .env
+        run: |
+          echo "${{secrets.ENV_FILE}}" > .env
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
