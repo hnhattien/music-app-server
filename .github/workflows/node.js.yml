@@ -25,4 +25,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
+          IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+          IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}
+          UPCARE_SECRET_KEY: ${{ secrets.UPCARE_SECRET_KEY }}
+          UPCARE_PUBLIC_KEY: ${{ secrets.UPCARE_PUBLIC_KEY }}
+          MAILTRAP_TOKEN: ${{ secrets.MAILTRAP_TOKEN }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
       - run: npm run build --if-present
