@@ -12,6 +12,7 @@ const MAIL_TRAP_TOKEN = process.env.MAILTRAP_TOKEN as string;
 const SENDER_EMAIL = process.env.SENDER_EMAIL as string;
 const DROPBOX_CLIENT_SECRET = process.env.DROPBOX_CLIENT_SECRET as string;
 const DROPBOX_CLIENT_ID = process.env.DROPBOX_CLIENT_ID as string;
+const CROSS_ORIGIN = process.env.CROSS_ORIGIN as string;
 export default {
   IMAGEKIT_PRIVATE_KEY,
   IMAGEKIT_PUBLIC_KEY,
@@ -22,4 +23,5 @@ export default {
   SENDER_EMAIL,
   DROPBOX_CLIENT_SECRET,
   DROPBOX_CLIENT_ID,
+  CROSS_ORIGIN
 };

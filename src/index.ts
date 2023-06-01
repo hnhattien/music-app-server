@@ -12,6 +12,7 @@ import passport from "passport";
 import flash from "express-flash";
 import initPassport from "@core/authenticate/PassportInit";
 import expressSession from "express-session";
+import config from "@core/config";
 const app = express();
 
 const server = http.createServer(app);
@@ -30,7 +31,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: "https://music-app-client-vq4s.vercel.app/",
+    origin: config.CROSS_ORIGIN,
     credentials: true,
   })
 );
