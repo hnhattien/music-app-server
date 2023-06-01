@@ -53,6 +53,7 @@ app.use(
     maxAge: 50000000,
     secure: false,
     httpOnly: false,
+    secureProxy: false,
   })
 );
 app.use(passport.initialize());
