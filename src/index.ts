@@ -51,8 +51,8 @@ app.use(
     secret: `secretcode`,
     sameSite: false,
     maxAge: 50000000,
-    domain: "ec2-3-27-169-177.ap-southeast-2.compute.amazonaws.com",
     secure: false,
+    httpOnly: false,
   })
 );
 app.use(passport.initialize());
