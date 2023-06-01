@@ -43,16 +43,16 @@ app.use(
     limit: "50mb",
   })
 );
-app.use(flash());
 app.use(express.urlencoded({ extended: false, limit: "25mb" }));
 app.use(cookieParser());
 
 app.use(
   cookieSession({
     secret: `secretcode`,
-    sameSite: "none",
+    sameSite: false,
     maxAge: 50000000,
     domain: "ec2-3-27-169-177.ap-southeast-2.compute.amazonaws.com",
+    secure: false,
   })
 );
 app.use(passport.initialize());
