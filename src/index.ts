@@ -13,16 +13,10 @@ import flash from "express-flash";
 import initPassport from "@core/authenticate/PassportInit";
 import cookieSession from "cookie-session";
 import config from "@core/config";
+import moment from "moment";
 const app = express();
 
 const server = http.createServer(app);
-
-const session = {
-  secret: `secretcode`,
-  cookie: { path: "/", originalMaxAge: 50000000 },
-  resave: false,
-  saveUninitialized: false,
-};
 
 app.use(
   express.json({
@@ -49,8 +43,8 @@ app.use(cookieParser());
 app.use(
   cookieSession({
     secret: `secretcode`,
-    sameSite: false,
-    maxAge: 50000000,
+    sameSite: "none",
+    maxAge: moment(new Date()).add(2, "day").toDate().getTime(),
     secure: false,
     httpOnly: false,
     secureProxy: false,
