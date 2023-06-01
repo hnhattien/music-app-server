@@ -33,7 +33,6 @@ console.log(config.CROSS_ORIGIN);
 app.use(
   cors({
     origin: config.CROSS_ORIGIN,
-    credentials: true,
   })
 );
 app.use(
