@@ -35,6 +35,8 @@ app.use(
     origin: config.CROSS_ORIGIN,
     credentials: true,
     allowedHeaders: "*",
+    preflightContinue: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   })
 );
 app.use(
