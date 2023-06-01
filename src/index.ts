@@ -29,6 +29,7 @@ app.use(
     limit: "50mb",
   })
 );
+console.log(config.CROSS_ORIGIN);
 app.use(
   cors({
     origin: config.CROSS_ORIGIN,
