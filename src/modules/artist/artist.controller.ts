@@ -12,7 +12,7 @@ const getArtistForAdmin = async (
   next: NextFunction
 ) => {
   try {
-    const user = req.session.user as Partial<User>;
+    const user = req.user as Partial<User>;
     if (!user || user.role === ROLE.ADMIN)
       throw new UnAuthenticated(
         "Yout not permit to see artist infomation. Please login as admin."

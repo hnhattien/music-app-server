@@ -221,7 +221,8 @@ const checkLoginStatus = async (
   next: NextFunction
 ) => {
   try {
-    let user = req.session.user as Partial<User>;
+    let user = req.user as Partial<User>;
+    console.log(req.session);
     console.log(user, "user");
     if (user) {
       res.send({

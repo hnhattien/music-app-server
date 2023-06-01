@@ -19,7 +19,7 @@ const getMusicInfoById = async (
     const { id } = req.params || {};
     console.log(id, "Joi");
     if (!id) next("route");
-    const user = req.session.user as Partial<User>;
+    const user = req.user as Partial<User>;
     if (user) {
       const musicInfo = await prismaClient.music.findFirst({
         where: {
@@ -145,7 +145,7 @@ const getMusicInfoBySlug = async (
 ) => {
   try {
     const { slug } = req.params || {};
-    const user = req.session.user as Partial<User>;
+    const user = req.user as Partial<User>;
     console.log(user);
     if (user) {
       console.log(slug);
@@ -206,7 +206,7 @@ const postHeartActionToMusic = async (
 ) => {
   try {
     const { songid } = req.body || {};
-    const user = req.session.user as Partial<User>;
+    const user = req.user as Partial<User>;
     if (user && user.id) {
       const affectedMusic = await prismaClient.music.findFirst({
         where: {
@@ -250,7 +250,7 @@ const postHeartActionToMusic = async (
 };
 const uploadMusic = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.session.user as Partial<User>;
+    const user = req.user as Partial<User>;
     if (user) {
       let songname = req.body.songname,
         artistname = req.body.artistname,
@@ -377,7 +377,7 @@ const updateLyrics = async (
   next: NextFunction
 ) => {
   try {
-    const user = req.session.user as Partial<User>;
+    const user = req.user as Partial<User>;
     const { songId, lyrics } = req.body || {};
     if (!user || user.role !== ROLE.ADMIN) {
       res.send({ error: { message: "You not permit perform this action" } });

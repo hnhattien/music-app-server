@@ -14,7 +14,7 @@ import config from "@core/config";
 import moment from "moment";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  const user = req.session.user as Partial<User>;
+  const user = req.user as Partial<User>;
   try {
     if (user && user.role === ROLE.ADMIN) {
       const users = await prismaClient.user.findMany({
@@ -49,7 +49,7 @@ const uploadAvatar = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.session.user as Partial<User>;
+  const user = req.user as Partial<User>;
   try {
     if (user) {
       let base64 = req.body.base64Image;
@@ -83,7 +83,7 @@ const changeNickName = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.session.user as Partial<User>;
+  const user = req.user as Partial<User>;
   try {
     if (user) {
       let newNickname = req.body.newNickname;
@@ -114,7 +114,7 @@ const getLikedMusics = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.session.user as Partial<User>;
+  const user = req.user as Partial<User>;
   try {
     if (user) {
       const musics = await prismaClient.music.findMany({
@@ -136,7 +136,7 @@ const getLikedMusics = async (
 };
 
 const getProfile = async (req: Request, res: Response, next: NextFunction) => {
-  const user = req.session.user as Partial<User>;
+  const user = req.user as Partial<User>;
   try {
     if (!user)
       res.send({
@@ -161,7 +161,7 @@ const changePassword = async (
   next: NextFunction
 ) => {
   const { selector, password, currentpassword, newpassword } = req.body || {};
-  const user = req.session.user as Partial<User>;
+  const user = req.user as Partial<User>;
   if (selector) {
     //For reset for forget password
     let resultEmail;
