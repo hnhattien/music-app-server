@@ -34,8 +34,7 @@ app.use(
   cors({
     origin: config.CROSS_ORIGIN,
     credentials: true,
-    allowedHeaders: "*",
-    preflightContinue: true,
+    allowedHeaders: ["*", "Content-Type"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   })
 );
@@ -46,7 +45,6 @@ app.use(
 );
 app.use(flash());
 app.use(express.urlencoded({ extended: false, limit: "25mb" }));
-app.use(bodyParser.urlencoded({ limit: "25mb", extended: true }));
 app.use(cookieParser());
 
 app.use(expressSession(session));
