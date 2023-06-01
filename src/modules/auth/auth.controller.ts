@@ -222,6 +222,7 @@ const checkLoginStatus = async (
 ) => {
   try {
     let user = req.user as Partial<User>;
+    console.log(user, "user");
     if (user) {
       res.send({
         isLogin: true,
