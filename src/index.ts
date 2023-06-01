@@ -11,7 +11,7 @@ import routes from "./routes";
 import passport from "passport";
 import flash from "express-flash";
 import initPassport from "@core/authenticate/PassportInit";
-import expressSession from "express-session";
+import cookieSession from "cookie-session";
 import config from "@core/config";
 const app = express();
 
@@ -47,7 +47,7 @@ app.use(flash());
 app.use(express.urlencoded({ extended: false, limit: "25mb" }));
 app.use(cookieParser());
 
-app.use(expressSession(session));
+app.use(cookieSession(session));
 app.use(passport.initialize());
 app.use(passport.session());
 initPassport(passport);
